@@ -11,7 +11,7 @@ public class Soldado : MonoBehaviour
     public GameObject DestinoAtual;
     public float tempo = 0;
 
-    public enum Estados { Ronda, Parado};
+    public enum Estados { Ronda, Parado, Perseguir};
     public Estados meuEstado;
 
     // Start is called before the first frame update
@@ -25,7 +25,16 @@ public class Soldado : MonoBehaviour
     void Update()
     {
         //AtivadoraDeGatilho
-        AtivarGatilho();
+        if(meuEstado == Estados.Perseguir)
+        {
+            PerseguirInimigo();
+        }
+        else
+        {
+            AtivarGatilho();
+        }
+
+        
         if(meuEstado == Estados.Ronda)
         {
             FazeRonda();
@@ -38,6 +47,13 @@ public class Soldado : MonoBehaviour
         }
 
 
+    }
+
+    void PerseguirInimigo()
+    {
+        Agente.speed = 12;
+        Agente.SetDestination(DestinoAtual.transform.position);
+        Atacar();
     }
 
     void FazeRonda()
@@ -74,6 +90,25 @@ public class Soldado : MonoBehaviour
         if(tempo <= 0)
         {
             meuEstado = Estados.Ronda;
+        }
+    }
+
+    private void Atacar()
+    {
+        if (Vector3.Distance(DestinoAtual.transform.position, transform.position) < 3)
+        {
+            Destroy(DestinoAtual);
+            meuEstado = Estados.Ronda;
+            DestinoAtual = DestinoA;
+        }
+    }
+
+    private void OnTriggerEnter(Collider colidiu)
+    {
+        if(colidiu.gameObject.tag == "Inimigo")
+        {
+            meuEstado = Estados.Perseguir;
+            DestinoAtual = colidiu.gameObject;
         }
     }
 }
