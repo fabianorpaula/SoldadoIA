@@ -15,19 +15,21 @@ public class Visao : MonoBehaviour
     void Update()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, Vector3.forward, out hit, 100))
+        Vector3 frente= transform.TransformDirection(Vector3.forward) * 400;
+        if (Physics.Raycast(transform.position, frente, out hit, 400))
         {
+            Debug.Log(hit.collider.gameObject.name);
             if(hit.collider.gameObject.tag == "Inimigo")
             {
                 //Debug TIRAR NA VERSÃO FINAL//
-                Debug.DrawLine(transform.position, hit.point, Color.white, 100);
-                Debug.Log(hit.collider.gameObject.name);
+                
                 Soldadinho.Enxerguei();
                 Soldadinho.DestinoAtual = hit.collider.gameObject;
             }
             
         }
-        
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * 400;
+        Debug.DrawRay(transform.position, forward, Color.green);
     }
 }
 
