@@ -102,13 +102,18 @@ public class Soldado : MonoBehaviour
             DestinoAtual = DestinoA;
         }
     }
-
+    /*
     private void OnTriggerEnter(Collider colidiu)
     {
         if(colidiu.gameObject.tag == "Inimigo")
         {
-            meuEstado = Estados.Perseguir;
+            
             DestinoAtual = colidiu.gameObject;
         }
+    }*/
+
+    public void Enxerguei()
+    {
+        meuEstado = Estados.Perseguir;
     }
 }
