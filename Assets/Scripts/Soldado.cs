@@ -11,7 +11,7 @@ public class Soldado : MonoBehaviour
     public GameObject DestinoAtual;
     public float tempo = 0;
 
-    public enum Estados { Ronda, Parado, Perseguir};
+    public enum Estados { Ronda, Parado, Perseguir, Atacar};
     public Estados meuEstado;
 
     // Start is called before the first frame update
@@ -46,15 +46,35 @@ public class Soldado : MonoBehaviour
             tempo--;
         }
 
+        GetComponent<Animator>().SetFloat("Speed", Agente.speed);
 
     }
 
     void PerseguirInimigo()
     {
         Agente.speed = 12;
-        Agente.SetDestination(DestinoAtual.transform.position);
-        Atacar();
+        if(DestinoAtual != null)
+        {
+            //Estar Perseguindo
+            Agente.SetDestination(DestinoAtual.transform.position);
+            if(Vector3.Distance(transform.position, DestinoAtual.transform.position) < 10)
+            {
+                meuEstado = Estados.Atacar;
+            }
+            
+        }
+        else
+        {
+            if (DestinoAtual == null)
+            {
+                meuEstado = Estados.Ronda;
+
+                DestinoAtual = DestinoA;
+            }
+        }
     }
+       
+
 
     void FazeRonda()
     {
@@ -98,8 +118,7 @@ public class Soldado : MonoBehaviour
         if (Vector3.Distance(DestinoAtual.transform.position, transform.position) < 3)
         {
             Destroy(DestinoAtual);
-            meuEstado = Estados.Ronda;
-            DestinoAtual = DestinoA;
+           
         }
     }
     /*
@@ -114,6 +133,18 @@ public class Soldado : MonoBehaviour
 
     public void Enxerguei()
     {
-        meuEstado = Estados.Perseguir;
+        if(meuEstado != Estados.Atacar)
+        {
+            meuEstado = Estados.Perseguir;
+        }
+        
     }
+
+    
+    //Atacar
+    public void Ataque()
+    {
+
+    }
+
 }
