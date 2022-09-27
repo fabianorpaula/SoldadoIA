@@ -23,7 +23,7 @@ public class Tiro : MonoBehaviour
             {
 
 
-                Destroy(hit.collider.gameObject);
+                hit.collider.gameObject.GetComponent<Soldado>().RecebeuTiro();
             }
 
         }

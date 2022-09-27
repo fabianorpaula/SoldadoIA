@@ -6,8 +6,9 @@ using UnityEngine.AI;
 public class Soldado : MonoBehaviour
 {
     private NavMeshAgent Agente;
-    public GameObject DestinoA;
-    public GameObject DestinoB;
+    
+    public List<GameObject> Destinos;
+    public int meuID_Destino;
     public GameObject DestinoAtual;
     public float tempo = 0;
 
@@ -16,11 +17,19 @@ public class Soldado : MonoBehaviour
     public enum Estados { Ronda, Parado, Perseguir, Atacar};
     public Estados meuEstado;
 
+
+    private int meuHP = 10;
+    private bool tomou_dano = false;
+    private float tempo_dano = 0;
+
     // Start is called before the first frame update
     void Start()
     {
+
         Agente = GetComponent<NavMeshAgent>();
-        DestinoAtual = DestinoA;
+        meuID_Destino = Random.Range(0, Destinos.Count);
+        DestinoAtual = Destinos[meuID_Destino];
+        meuEstado = Estados.Ronda;
     }
 
     // Update is called once per frame
@@ -40,10 +49,7 @@ public class Soldado : MonoBehaviour
 
         if (meuEstado == Estados.Atacar)
         {
-            Agente.speed = 0;
-            GetComponent<Animator>().SetBool("Aiming", true);
-            GetComponent<Animator>().SetTrigger("Attack");
-            transform.LookAt(DestinoAtual.transform.position);
+            Atacar();
         }
         else
         {
@@ -65,28 +71,45 @@ public class Soldado : MonoBehaviour
 
         GetComponent<Animator>().SetFloat("Speed", Agente.speed);
 
+        if(tomou_dano == true)
+        {
+            tempo += Time.deltaTime;
+            if(tempo > 1)
+            {
+                tomou_dano = false;
+            }
+        }
+
     }
 
     void PerseguirInimigo()
     {
-        Agente.speed = 12;
+        Agente.speed = 35;
         if(DestinoAtual != null)
         {
-            //Estar Perseguindo
-            Agente.SetDestination(DestinoAtual.transform.position);
-            if(Vector3.Distance(transform.position, DestinoAtual.transform.position) < 10)
+            if(DestinoAtual == gameObject)
             {
-                meuEstado = Estados.Atacar;
+                DestinoAtual = null;
             }
+            else
+            {
+                //Estar Perseguindo
+                Agente.SetDestination(DestinoAtual.transform.position);
+                if (Vector3.Distance(transform.position, DestinoAtual.transform.position) < 10)
+                {
+                    meuEstado = Estados.Atacar;
+                }
+            }
+            
             
         }
         else
         {
             if (DestinoAtual == null)
             {
+                meuID_Destino = Random.Range(0, Destinos.Count);
+                DestinoAtual = Destinos[meuID_Destino];
                 meuEstado = Estados.Ronda;
-
-                DestinoAtual = DestinoA;
             }
         }
     }
@@ -95,20 +118,19 @@ public class Soldado : MonoBehaviour
 
     void FazeRonda()
     {
-        Agente.speed = 12;
+        Agente.speed = 30;
         Agente.SetDestination(DestinoAtual.transform.position);
         MudaDestino();
     }
     void MudaDestino()
     {
-        if(Vector3.Distance(DestinoA.transform.position, transform.position) < 3)
+        if(Vector3.Distance(DestinoAtual.transform.position, transform.position) < 3)
         {
-            DestinoAtual = DestinoB;
+            meuID_Destino = Random.Range(0, Destinos.Count);
+            DestinoAtual = Destinos[meuID_Destino];
         }
-        if (Vector3.Distance(DestinoB.transform.position, transform.position) < 3)
-        {
-            DestinoAtual = DestinoA;
-        }
+        
+        
 
     }
 
@@ -119,7 +141,7 @@ public class Soldado : MonoBehaviour
 
     void AtivarGatilho()
     {
-        if(tempo > 300)
+        /*if(tempo > 1)
         {
             meuEstado = Estados.Parado;
         }
@@ -127,26 +149,30 @@ public class Soldado : MonoBehaviour
         if(tempo <= 0)
         {
             meuEstado = Estados.Ronda;
-        }
+        }*/
     }
 
     private void Atacar()
     {
-        if (Vector3.Distance(DestinoAtual.transform.position, transform.position) < 3)
+        if (DestinoAtual != null)
         {
-            Destroy(DestinoAtual);
-           
+
+
+            Agente.speed = 0;
+            GetComponent<Animator>().SetBool("Aiming", true);
+            GetComponent<Animator>().SetTrigger("Attack");
+            transform.LookAt(DestinoAtual.transform.position);
+        }
+        else
+        {
+            //Alguem Morreu
+            meuEstado = Estados.Ronda;
+            meuID_Destino = Random.Range(0, Destinos.Count);
+            DestinoAtual = Destinos[meuID_Destino];
+
         }
     }
-    /*
-    private void OnTriggerEnter(Collider colidiu)
-    {
-        if(colidiu.gameObject.tag == "Inimigo")
-        {
-            
-            DestinoAtual = colidiu.gameObject;
-        }
-    }*/
+    
 
     public void Enxerguei()
     {
@@ -161,7 +187,7 @@ public class Soldado : MonoBehaviour
     //Atacar
     public void Ataque()
     {
-        Debug.Log("Chamei Arma");
+        
         MinhaArma.SetActive(true);
     }
 
@@ -170,4 +196,17 @@ public class Soldado : MonoBehaviour
         MinhaArma.SetActive(false);
     }
 
+
+    public void RecebeuTiro()
+    {
+        if(tomou_dano == false)
+        {
+            tomou_dano = true;
+            meuHP--;
+            if(meuHP <= 0)
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
 }
