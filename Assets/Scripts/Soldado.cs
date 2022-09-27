@@ -11,6 +11,8 @@ public class Soldado : MonoBehaviour
     public GameObject DestinoAtual;
     public float tempo = 0;
 
+    public GameObject MinhaArma;
+
     public enum Estados { Ronda, Parado, Perseguir, Atacar};
     public Estados meuEstado;
 
@@ -41,6 +43,7 @@ public class Soldado : MonoBehaviour
             Agente.speed = 0;
             GetComponent<Animator>().SetBool("Aiming", true);
             GetComponent<Animator>().SetTrigger("Attack");
+            transform.LookAt(DestinoAtual.transform.position);
         }
         else
         {
@@ -158,7 +161,13 @@ public class Soldado : MonoBehaviour
     //Atacar
     public void Ataque()
     {
+        Debug.Log("Chamei Arma");
+        MinhaArma.SetActive(true);
+    }
 
+    public void DesativaAtaque()
+    {
+        MinhaArma.SetActive(false);
     }
 
 }
