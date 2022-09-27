@@ -34,8 +34,22 @@ public class Soldado : MonoBehaviour
             AtivarGatilho();
         }
 
-        
-        if(meuEstado == Estados.Ronda)
+
+
+        if (meuEstado == Estados.Atacar)
+        {
+            Agente.speed = 0;
+            GetComponent<Animator>().SetBool("Aiming", true);
+            GetComponent<Animator>().SetTrigger("Attack");
+        }
+        else
+        {
+            GetComponent<Animator>().SetBool("Aiming", false);
+        }
+
+
+
+        if (meuEstado == Estados.Ronda)
         {
             FazeRonda();
             tempo++;
