@@ -5,6 +5,14 @@ using UnityEngine.AI;
 
 public class Soldado : MonoBehaviour
 {
+
+    public int NovaVida;
+    public float NovaVelocidade;
+    public float NovaVisao;
+    public float NovoAlcance;
+    public float NovoPerseguir;
+
+
     private NavMeshAgent Agente;
     
     public List<GameObject> Destinos;
@@ -25,7 +33,7 @@ public class Soldado : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        meuHP = meuHP + NovaVida;
         Agente = GetComponent<NavMeshAgent>();
         meuID_Destino = Random.Range(0, Destinos.Count);
         DestinoAtual = Destinos[meuID_Destino];

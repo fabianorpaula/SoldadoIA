@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Tiro : MonoBehaviour
 {
+    public int MaisTiro;
+    private int DistanciaTiro = 300;
     // Start is called before the first frame update
     void Start()
     {
-        
+        DistanciaTiro = DistanciaTiro + MaisTiro;
     }
 
     // Update is called once per frame
@@ -15,8 +17,8 @@ public class Tiro : MonoBehaviour
     void Update()
     {
         RaycastHit hit;
-        Vector3 frente = transform.TransformDirection(Vector3.forward) * 400;
-        if (Physics.Raycast(transform.position, frente, out hit, 400))
+        Vector3 frente = transform.TransformDirection(Vector3.forward) * DistanciaTiro;
+        if (Physics.Raycast(transform.position, frente, out hit, DistanciaTiro))
         {
             Debug.Log(hit.collider.gameObject.name);
             if (hit.collider.gameObject.tag == "Inimigo")
@@ -27,7 +29,7 @@ public class Tiro : MonoBehaviour
             }
 
         }
-        Vector3 forward = transform.TransformDirection(Vector3.forward) * 400;
+        Vector3 forward = transform.TransformDirection(Vector3.forward) * DistanciaTiro;
         Debug.DrawRay(transform.position, forward, Color.red);
     }
 }
